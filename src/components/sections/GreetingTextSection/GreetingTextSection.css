@@ -1,0 +1,201 @@
+.greeting-text-section {
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.greeting-text-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.greeting-text-section .description {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.greeting-text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.greeting-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 1rem;
+  border: 2px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+  line-height: 1.5;
+}
+
+.greeting-textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.greeting-textarea::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.character-counter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.character-count {
+  color: #666;
+}
+
+.character-count.warning {
+  color: #ff9800;
+}
+
+.character-count.error {
+  color: #f44336;
+}
+
+.generate-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: flex-start;
+}
+
+.generate-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.generate-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.generated-greetings {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.generated-greetings h4 {
+  margin: 0 0 1rem 0;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.greeting-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.greeting-option {
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 0.3rem;
+  padding: 0.8rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.greeting-option:hover {
+  background-color: #e3f2fd;
+  border-color: #2196f3;
+  color: #1976d2;
+}
+
+.greeting-examples {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.greeting-examples h4 {
+  margin: 0 0 0.5rem 0;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.examples-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.examples-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-style: italic;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.examples-list li:last-child {
+  border-bottom: none;
+}
+
+.examples-list li:hover {
+  color: #007bff;
+}
+
+.greeting-tips {
+  background-color: #e3f2fd;
+  border: 1px solid #2196f3;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.greeting-tips h4 {
+  margin: 0 0 0.5rem 0;
+  color: #1976d2;
+  font-size: 0.9rem;
+}
+
+.greeting-tips ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.8rem;
+  color: #1976d2;
+}
+
+.greeting-tips li {
+  margin-bottom: 0.3rem;
+}
+
+@media (max-width: 768px) {
+  .greeting-text-section {
+    padding: 1.5rem;
+  }
+  
+  .greeting-textarea {
+    min-height: 100px;
+    padding: 0.8rem;
+  }
+}

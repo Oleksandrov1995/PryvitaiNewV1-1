@@ -1,0 +1,57 @@
+.card-mood-section {
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.card-mood-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.card-mood-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.card-mood-button {
+  padding: 0.5rem 1rem;
+  border: 2px solid #ccc;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.card-mood-button:hover {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.card-mood-button.active {
+  border-color: #007bff;
+  background-color: #007bff;
+  color: white;
+}
+
+.custom-mood-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  transition: border-color 0.3s ease;
+}
+
+.custom-mood-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.custom-mood-input::placeholder {
+  color: #666;
+  font-style: italic;
+}

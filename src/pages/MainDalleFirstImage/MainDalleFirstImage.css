@@ -1,0 +1,127 @@
+.main-dalle-first-image {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  padding-bottom: 120px; /* Відступ для фіксованої кнопки */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-dalle-first-image h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.form-header {
+  margin-bottom: 60px;
+  background: #64255c;
+  color: #fff;
+  padding: 32px 32px 16px 32px;
+  border-radius: 14px;
+  text-align: left;
+  font-size: 1.7rem;
+  font-weight: 600;
+  position: relative;
+  box-shadow: 0 2px 12px rgba(100, 37, 92, 0.10);
+}
+
+.form-header::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  bottom: 16px;
+  width: 8px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #b24592 0%, #64255c 100%);
+}
+
+.form-header h1 {
+  color: white;
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.main-dalle-first-image section {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.main-dalle-first-image section:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Глобальні стилі для всіх секцій */
+.main-dalle-first-image h2 {
+  color: #2c3e50;
+  text-align: left;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  border: none;
+}
+
+/* Стилі для навігаційних кнопок */
+.navigation-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.nav-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #007bff;
+  background-color: white;
+  color: #007bff;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: #007bff;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.nav-button.completed {
+  background-color: #007bff;
+  color: white;
+}
+
+.progress-indicator {
+  margin-bottom: 1rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  transition: width 0.3s ease;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+  .main-dalle-first-image {
+    padding: 1rem;
+    padding-bottom: 120px; /* Відступ для фіксованої кнопки */
+  }
+  
+  .main-dalle-first-image h1 {
+    font-size: 1.5rem;
+  }
+}

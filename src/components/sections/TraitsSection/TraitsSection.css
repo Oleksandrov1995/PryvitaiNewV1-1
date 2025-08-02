@@ -1,0 +1,121 @@
+.traits-section {
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.traits-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.traits-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.trait-button {
+  padding: 0.5rem 1rem;
+  border: 2px solid #ccc;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.trait-button:hover {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.trait-button.active {
+  border-color: #007bff;
+  background-color: #007bff;
+  color: white;
+}
+
+.custom-trait-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  transition: border-color 0.3s ease;
+}
+
+.custom-trait-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.custom-trait-input::placeholder {
+  color: #666;
+  font-style: italic;
+}
+
+.selection-info {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.trait-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.trait-button.disabled:hover {
+  border-color: #ccc;
+  background-color: #fff;
+}
+
+.selected-items {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  border: 1px solid #e9ecef;
+}
+
+.selected-items p {
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+  color: #495057;
+}
+
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.selected-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background-color: #007bff;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+}
+
+.remove-tag {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  margin-left: 0.2rem;
+}
+
+.remove-tag:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}

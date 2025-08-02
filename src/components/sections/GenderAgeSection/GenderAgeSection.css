@@ -1,0 +1,139 @@
+.gender-age-section {
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.gender-age-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.gender-age-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.gender-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gender-group h3 {
+  font-size: 1.2rem;
+  margin: 0;
+  color: #555;
+}
+
+.gender-options {
+  display: flex;
+  gap: 1rem;
+}
+
+.gender-button {
+  flex: 1;
+  padding: 1rem 2rem;
+  border: 2px solid #ccc;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.gender-button:hover {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.gender-button.active {
+  border-color: #007bff;
+  background-color: #007bff;
+  color: white;
+}
+
+.gender-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.age-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.age-group h3 {
+  font-size: 1.2rem;
+  margin: 0;
+  color: #555;
+}
+
+.age-input-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.age-input {
+  padding: 0.75rem;
+  border: 2px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  width: 120px;
+  text-align: center;
+}
+
+.age-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.age-label {
+  font-size: 1rem;
+  color: #333;
+}
+
+.age-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.age-suggestion {
+  padding: 0.5rem 1rem;
+  border: 2px solid #ccc;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.age-suggestion:hover {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.age-suggestion.active {
+  border-color: #007bff;
+  background-color: #007bff;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .gender-options {
+    flex-direction: column;
+  }
+  
+  .gender-age-container {
+    gap: 1.5rem;
+  }
+}
