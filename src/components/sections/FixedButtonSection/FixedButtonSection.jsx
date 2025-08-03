@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './FixedButtonSection.css';
  
-export const FixedButtonSection = ({ formData, onGenerateImage, loading,onButtonClick }) => {
+export const FixedButtonSection = ({ formData, onGenerateImage, loading, onButtonClick }) => {
   // useState для управління поточним рівнем та прогресом
   const [currentLevel, setCurrentLevel] = useState(0);
-  const [progressScore, setProgressScore] = useState(0);
   // Стани для кнопки
   const states = [
     {
@@ -58,7 +57,7 @@ export const FixedButtonSection = ({ formData, onGenerateImage, loading,onButton
   ];
 
   // Функція для підрахунку прогресу
-  const calculateProgress = () => {
+  const calculateProgress = useCallback(() => {
     let score = 0;
     if (formData.cardStyle) score++;
     if (formData.cardMood) score++;
@@ -70,17 +69,16 @@ export const FixedButtonSection = ({ formData, onGenerateImage, loading,onButton
     if (formData.greetingSubject) score++;
     if (formData.trait) score++;
     return score;
-  };
+  }, [formData]);
 
   // useEffect для оновлення стану при зміні formData
   useEffect(() => {
     const newScore = calculateProgress();
-    setProgressScore(newScore);
     
     // Визначаємо поточний рівень (0-5)
     const newLevel = Math.max(0, Math.min(newScore - 1, 5));
     setCurrentLevel(newLevel);
-  }, [formData]);
+  }, [calculateProgress]);
 
   // Отримуємо поточний стан кнопки
   const currentState = states[currentLevel];

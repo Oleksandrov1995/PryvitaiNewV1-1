@@ -15,8 +15,6 @@ import {
 import { useFormData } from "../../utils/formHandlers";
 
 export const MainDalleFirstImage = () => {
-  // useState для статусу завантаження
-  const [loading, setLoading] = useState(false);
   // useState для контролю видимості фіксованої кнопки
   const [isFixedButtonVisible, setIsFixedButtonVisible] = useState(true);
   
@@ -105,13 +103,14 @@ export const MainDalleFirstImage = () => {
       }
     );
 
-    if (imageGenerationRef.current) {
-      observer.observe(imageGenerationRef.current);
+    const currentRef = imageGenerationRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
     }
 
     return () => {
-      if (imageGenerationRef.current) {
-        observer.unobserve(imageGenerationRef.current);
+      if (currentRef) {
+        observer.unobserve(currentRef);
       }
     };
   }, []);

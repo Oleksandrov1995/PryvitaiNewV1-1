@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useEffect } from "react";
+import React, { useState, forwardRef, useEffect, useCallback } from "react";
 import "./ImageGenerationSection.css";
 import { dalleImagePrompt } from "../../../prompts/openai/dalleImagePrompt";
 import { API_URLS } from "../../../config/api";
@@ -6,21 +6,10 @@ import { downloadImage } from "../../../utils/downloadImage";
 
 const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSection, formData, onGenerateImageRef }, ref) => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedPrompt, setGeneratedPrompt] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [generatedImageUrl, setGeneratedImageUrl] = useState("");
-  const [currentStep, setCurrentStep] = useState("");
-  const [error, setError] = useState("");
-  const [makeComStatus, setMakeComStatus] = useState("");
 
-  const generateImage = async () => {
+  const generateImage = useCallback(async () => {
     setIsGenerating(true);
-    setError("");
-    setGeneratedPrompt("");
-    setImageUrl("");
-    setGeneratedImageUrl("");
-    setCurrentStep("");
-    setMakeComStatus("");
     
     try {
       console.log('FormData для генерації зображення:', formData);
@@ -30,8 +19,6 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
       
       // Крок 1: Завантаження фото на Cloudinary (якщо є фото)
       if (formData.photo) {
-        setCurrentStep("Завантажую фото на Cloudinary...");
-        
         // Перетворюємо файл в base64
         const convertToBase64 = (file) => {
           return new Promise((resolve, reject) => {
@@ -60,14 +47,11 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
 
         const uploadData = await uploadResponse.json();
         photoUrl = uploadData.url;
-        setImageUrl(photoUrl);
         
         console.log('Фото завантажено на Cloudinary:', photoUrl);
       }
       
       // Крок 2: Генерація промпта з URL фото
-      setCurrentStep("Генерую промпт для зображення...");
-      
       const formDataWithUrl = {
         ...formData,
         photoUrl: photoUrl
@@ -99,12 +83,7 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
       const data = await response.json();
       
       if (data.generatedPrompt) {
-        setGeneratedPrompt(data.generatedPrompt);
-        
-        // Крок 3: Генерація зображення через Make.com webhook (завжди, з фото або з заглушкою)
-        setCurrentStep("Генерую фінальне зображення...");
-        setMakeComStatus("Відправляю запит до Make.com...");
-        
+        // Крок 3: Генерація зображення через Make.com webhook
         try {
           console.log('Відправляю запит до Make.com webhook...');
           
@@ -114,9 +93,9 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
           }
           
           // Спробуємо FormData формат
-          const formData = new FormData();
-          formData.append('prompt', data.generatedPrompt);
-          formData.append('imageUrl', photoUrl); // завжди передаємо URL (або реальне фото, або публічну заглушку)
+          const formDataForMake = new FormData();
+          formDataForMake.append('prompt', data.generatedPrompt);
+          formDataForMake.append('imageUrl', photoUrl);
           
           if (formDataWithUrl.photo) {
             console.log('✅ Використовую реальне фото користувача:', photoUrl);
@@ -124,35 +103,18 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
             console.log('⚠️ Використовую ваше зображення як заглушку:', photoUrl);
           }
           
-          formData.append('style', formDataWithUrl.cardStyle || '');
-          formData.append('mood', formDataWithUrl.cardMood || '');
-          formData.append('hobby', formDataWithUrl.hobby || '');
-          formData.append('trait', formDataWithUrl.trait || '');
-          formData.append('greeting', formDataWithUrl.greetingText || '');
-          
-          console.log('Дані для Make.com (FormData):', {
-            prompt: data.generatedPrompt,
-            imageUrl: photoUrl,
-            photoType: formDataWithUrl.photo ? 'реальне фото користувача' : 'ваша заглушка',
-            style: formDataWithUrl.cardStyle || 'не вказано',
-            mood: formDataWithUrl.cardMood || 'не вказано',
-            hobby: formDataWithUrl.hobby || 'не вказано',
-            trait: formDataWithUrl.trait || 'не вказано',
-            greeting: formDataWithUrl.greetingText || 'не вказано'
-          });
-          
-          console.log('Розмір FormData полів:');
-          for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${typeof value === 'string' ? value.length + ' символів' : 'тип: ' + typeof value}`);
-          }
+          formDataForMake.append('style', formDataWithUrl.cardStyle || '');
+          formDataForMake.append('mood', formDataWithUrl.cardMood || '');
+          formDataForMake.append('hobby', formDataWithUrl.hobby || '');
+          formDataForMake.append('trait', formDataWithUrl.trait || '');
+          formDataForMake.append('greeting', formDataWithUrl.greetingText || '');
           
           const imageGenerationResponse = await fetch('https://hook.eu2.make.com/o8eoc69ifeo4ne9pophf1io4q30wm23c', {
             method: 'POST',
-            body: formData, // відправляємо як FormData
+            body: formDataForMake,
           });
 
           console.log('Статус відповіді Make.com:', imageGenerationResponse.status);
-          console.log('Headers відповіді:', imageGenerationResponse.headers);
 
           if (imageGenerationResponse.ok) {
             const responseText = await imageGenerationResponse.text();
@@ -160,9 +122,8 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
             
             // Якщо відповідь - це просто URL зображення
             if (responseText && (responseText.startsWith('http') || responseText.startsWith('"http'))) {
-              const generatedImageUrl = responseText.trim().replace(/"/g, ''); // видаляємо лапки якщо є
+              const generatedImageUrl = responseText.trim().replace(/"/g, '');
               setGeneratedImageUrl(generatedImageUrl);
-              setMakeComStatus("✅ Зображення успішно згенеровано!");
               
               if (onImageGenerated) {
                 onImageGenerated("finalGeneratedImageUrl", generatedImageUrl);
@@ -175,18 +136,15 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
                 
                 if (imageData.generatedImageUrl) {
                   setGeneratedImageUrl(imageData.generatedImageUrl);
-                  setMakeComStatus("✅ Зображення успішно згенеровано!");
                   
                   if (onImageGenerated) {
                     onImageGenerated("finalGeneratedImageUrl", imageData.generatedImageUrl);
                   }
                 } else {
                   console.warn('Make.com повернув дані без generatedImageUrl:', imageData);
-                  setMakeComStatus("⚠️ Make.com повернув відповідь без URL зображення");
                 }
               } catch (parseError) {
                 console.warn('Не вдалося парсити відповідь Make.com як JSON:', parseError);
-                setMakeComStatus("⚠️ Make.com повернув нечитабельну відповідь");
               }
             }
           } else {
@@ -195,40 +153,16 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
               status: imageGenerationResponse.status,
               statusText: imageGenerationResponse.statusText,
               body: errorText,
-              url: imageGenerationResponse.url,
-              headers: Object.fromEntries(imageGenerationResponse.headers.entries())
             });
-            
-            // Покращене повідомлення про помилку
-            if (imageGenerationResponse.status === 500) {
-              setMakeComStatus(`❌ Помилка Make.com сервера (500): ${errorText}`);
-              console.warn('🔧 Можливі причини помилки 500:');
-              console.warn('- Проблема з обробкою зображення в Make.com');
-              console.warn('- Недоступність зовнішніх API (DALL-E, тощо)');
-              console.warn('- Перевантаження Make.com сценарію');
-              console.warn('- Неправильний формат даних');
-            } else {
-              setMakeComStatus(`❌ Помилка Make.com: ${imageGenerationResponse.status} ${imageGenerationResponse.statusText}`);
-            }
             
             console.warn('Помилка при генерації фінального зображення через Make.com');
           }
         } catch (makeError) {
           console.error('Помилка Make.com webhook:', makeError);
-          console.error('Деталі помилки:', {
-            name: makeError.name,
-            message: makeError.message,
-            stack: makeError.stack
-          });
-          setMakeComStatus(`❌ Помилка підключення до Make.com: ${makeError.message}`);
-          // Не зупиняємо процес, якщо Make.com недоступний
         }
-        
-        setCurrentStep("Готово!");
         
         if (onImageGenerated) {
           onImageGenerated("generatedImagePrompt", data.generatedPrompt);
-          // Завжди передаємо imageUrl (або реальне фото, або заглушку)
           onImageGenerated("imageUrl", photoUrl);
         }
         
@@ -240,12 +174,10 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
       
     } catch (error) {
       console.error('Помилка генерації зображення:', error);
-      setError('Виникла помилка при генерації зображення. Спробуйте ще раз.');
-      setCurrentStep("");
     } finally {
       setIsGenerating(false);
     }
-  };
+  }, [formData, onImageGenerated, scrollToNextSection]);
 
   const isFormComplete = () => {
     let completedFields = 0;
