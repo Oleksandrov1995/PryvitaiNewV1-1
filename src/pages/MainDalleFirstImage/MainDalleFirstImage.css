@@ -6,6 +6,21 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Глобальні стилі для активних кнопок (крім FixedButtonSection) */
+.main-dalle-first-image button.active,
+.main-dalle-first-image .card-style-button.active,
+.main-dalle-first-image .card-mood-button.active,
+.main-dalle-first-image .gender-button.active,
+.main-dalle-first-image .age-button.active,
+.main-dalle-first-image .hobby-button.active,
+.main-dalle-first-image .trait-button.active,
+.main-dalle-first-image .subject-button.active {
+  background: #d0f0d0 !important;
+  border-color: #4caf50 !important;
+  box-shadow: 0 0 0 2px #bfdbfe !important;
+  color: #000000 !important;
+}
+
 .main-dalle-first-image h1 {
   text-align: center;
   color: #333;

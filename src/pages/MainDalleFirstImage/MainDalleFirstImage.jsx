@@ -146,22 +146,23 @@ export const MainDalleFirstImage = () => {
         onHobbyChange={handleFieldChange}
         scrollToNextSection={createScrollToNextSection(4)}
       />
-       <GreetingTextSection 
-        ref={greetingTextRef}
-        onTextChange={handleFieldChange}
-        formData={formData}
-        scrollToNextSection={createScrollToNextSection(5)}
-      />
+ 
       
       <GreetingSubjectSection 
         ref={greetingSubjectRef}
         onSubjectChange={handleFieldChange}
-        scrollToNextSection={createScrollToNextSection(6)}
+        scrollToNextSection={createScrollToNextSection(5)}
       />
       
       <TraitsSection 
         ref={traitsRef}
         onTraitChange={handleFieldChange}
+        scrollToNextSection={createScrollToNextSection(6)}
+      />
+            <GreetingTextSection 
+        ref={greetingTextRef}
+        onTextChange={handleFieldChange}
+        formData={formData}
         scrollToNextSection={createScrollToNextSection(7)}
       />
       
