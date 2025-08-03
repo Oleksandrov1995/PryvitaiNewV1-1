@@ -53,6 +53,14 @@
   font-size: 0.8rem;
   color: #666;
   margin-top: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.confirmed-indicator {
+  color: #28a745;
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 
 .character-count {
@@ -86,6 +94,34 @@
 .generate-button:disabled {
   background-color: #6c757d;
   cursor: not-allowed;
+}
+
+.confirm-button {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.confirm-button:hover {
+  background: linear-gradient(135deg, #218838 0%, #1db584 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+}
+
+.confirm-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
 }
 
 .generated-greetings {

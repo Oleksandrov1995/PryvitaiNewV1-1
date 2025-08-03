@@ -1,31 +1,43 @@
-import React, { useState, forwardRef } from "react";
+import React, { useState, forwardRef, useRef } from "react";
 import "./GreetingTextSection.css";
 import { greetingTextPrompts } from "../../../prompts/openai/greetingTextPrompts";
 import { API_URLS } from "../../../config/api";
 
 const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, formData }, ref) => {
   const [greetingText, setGreetingText] = useState("");
+  const [previewText, setPreviewText] = useState(""); // Проміжний стейт для попереднього перегляду
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedGreetings, setGeneratedGreetings] = useState([]);
+  const textareaRef = useRef(null);
+  const generatedGreetingsRef = useRef(null);
   const maxLength = 500;
 
   const handleTextChange = (value) => {
     if (value.length <= maxLength) {
-      setGreetingText(value);
+      setPreviewText(value); // Оновлюємо тільки preview
       
-      if (onTextChange) {
-        onTextChange("greetingText", value);
-      }
-
-      // Автоматичний скрол після введення достатньої кількості тексту
-      if (value.length >= 20 && scrollToNextSection) {
-        setTimeout(() => scrollToNextSection(), 1000);
-      }
+      // Прибираємо автоматичний скрол звідси
     }
   };
 
   const handleExampleClick = (example) => {
     handleTextChange(example);
+    
+    // Скролимо до textarea після вибору варіанту
+    if (textareaRef.current) {
+      textareaRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
+      
+      // Фокусуємося на textarea після скролу
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus();
+        }
+      }, 500);
+    }
   };
 
   const generateGreetingIdeas = async () => {
@@ -49,6 +61,18 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
 
       const data = await response.json();
       setGeneratedGreetings(data.greetings || []);
+      
+      // Скролимо до згенерованих привітань після їх отримання
+      setTimeout(() => {
+        if (generatedGreetingsRef.current && data.greetings && data.greetings.length > 0) {
+          generatedGreetingsRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest'
+          });
+        }
+      }, 300); // Невелика затримка щоб DOM встиг оновитися
+      
     } catch (error) {
       console.error('Помилка генерації:', error);
       alert('Виникла помилка при генерації привітань. Спробуйте ще раз.');
@@ -58,7 +82,7 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
   };
 
   const getCharacterCountClass = () => {
-    const remaining = maxLength - greetingText.length;
+    const remaining = maxLength - previewText.length;
     if (remaining < 50) return 'error';
     if (remaining < 100) return 'warning';
     return '';
@@ -73,7 +97,8 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
 
       <div className="greeting-text-container">
         <textarea
-          value={greetingText}
+          ref={textareaRef}
+          value={previewText}
           onChange={(e) => handleTextChange(e.target.value)}
           placeholder="Введіть ваш текст привітання тут... Наприклад: 'Щиро вітаю з днем народження! Бажаю здоров'я, щастя та успіхів!'"
           className="greeting-textarea"
@@ -83,20 +108,43 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
         <div className="character-counter">
           <span>Мінімум 20 символів для продовження</span>
           <span className={`character-count ${getCharacterCountClass()}`}>
-            {greetingText.length}/{maxLength}
+            {previewText.length}/{maxLength}
           </span>
+         
         </div>
 
         <button 
           onClick={generateGreetingIdeas}
           disabled={isGenerating}
           className="generate-button"
+          style={{ display: generatedGreetings.length > 0 ? 'none' : 'block' }}
         >
           {isGenerating ? 'Генерую...' : 'Згенерувати ідеї привітання'}
         </button>
 
         {generatedGreetings.length > 0 && (
-          <div className="generated-greetings">
+          <button 
+            onClick={() => {
+              // Підтверджуємо текст - переносимо з preview в основний стейт
+              setGreetingText(previewText);
+              
+              if (onTextChange) {
+                onTextChange("greetingText", previewText);
+              }
+              
+              if (scrollToNextSection) {
+                scrollToNextSection();
+              }
+            }}
+            className="confirm-button"
+            disabled={!previewText || previewText.length < 20}
+          >
+            ✅ Підтвердити ідею
+          </button>
+        )}
+
+        {generatedGreetings.length > 0 && (
+          <div ref={generatedGreetingsRef} className="generated-greetings">
             <h4>💡 Згенеровані ідеї привітань:</h4>
             <div className="greeting-options">
               {generatedGreetings.map((greeting, index) => (
@@ -113,14 +161,7 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
         )}
 
         <div className="greeting-tips">
-          <h4>💡 Поради для написання привітання:</h4>
-          <ul>
-            <li>Використовуйте особисті звернення та імена</li>
-            <li>Додайте щирі побажання та емоції</li>
-            <li>Згадайте спільні спогади або особливі моменти</li>
-            <li>Пишіть від серця - це найважливіше!</li>
-            <li>Перевірте текст на помилки перед завершенням</li>
-          </ul>
+                  <p>Перевірте текст на помилки перед завершенням</p>
         </div>
       </div>
     </section>
