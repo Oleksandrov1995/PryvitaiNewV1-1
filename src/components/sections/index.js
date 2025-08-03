@@ -9,4 +9,4 @@ export { default as CardStyleSection } from './CardStyleSection/CardStyleSection
 export { default as CardMoodSection } from './CardMoodSection/CardMoodSection';
 export { default as TraitsSection } from './TraitsSection/TraitsSection';
 export { default as ImageGenerationSection } from './ImageGenerationSection/ImageGenerationSection';
-export { default as FixedButtonSection } from './FixedButtonSection/FixedButtonSection';
+export { FixedButtonSection } from './FixedButtonSection/FixedButtonSection';

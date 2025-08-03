@@ -1,9 +1,10 @@
-import React, { useState, forwardRef } from "react";
+import React, { useState, forwardRef, useEffect } from "react";
 import "./ImageGenerationSection.css";
 import { dalleImagePrompt } from "../../../prompts/openai/dalleImagePrompt";
 import { API_URLS } from "../../../config/api";
+import { downloadImage } from "../../../utils/downloadImage";
 
-const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSection, formData }, ref) => {
+const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSection, formData, onGenerateImageRef }, ref) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -84,7 +85,15 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
       });
 
       if (!response.ok) {
-        throw new Error('Помилка при генерації промпта');
+        if (response.status === 429) {
+          throw new Error('Перевищено ліміт запитів. Будь ласка, спробуйте через кілька хвилин.');
+        } else if (response.status === 500) {
+          throw new Error('Помилка сервера. Спробуйте пізніше.');
+        } else if (response.status === 503) {
+          throw new Error('Сервіс тимчасово недоступний. Спробуйте пізніше.');
+        } else {
+          throw new Error(`Помилка при генерації промпта: ${response.status} ${response.statusText}`);
+        }
       }
 
       const data = await response.json();
@@ -254,6 +263,24 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
     return completedFields >= 2;
   };
 
+  // Передаємо функцію generateImage через ref
+  useEffect(() => {
+    if (onGenerateImageRef) {
+      onGenerateImageRef.current = { generateImage, isGenerating };
+    }
+  }, [generateImage, isGenerating, onGenerateImageRef]);
+
+  // Функція для скачування зображення
+  const handleDownloadImage = async () => {
+    if (!generatedImageUrl) return;
+    
+    const filename = `pryvitai-${Date.now()}.png`;
+    await downloadImage(generatedImageUrl, filename);
+  };
+
+
+
+
   return (
     <section ref={ref} className="image-generation-section">
       <button 
@@ -279,6 +306,13 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
             <img src={generatedImageUrl} alt="Згенероване зображення" className="preview-image" />
           </div>
           <p>🌟 Фінальне зображення успішно згенеровано!</p>
+          
+          <button 
+            onClick={handleDownloadImage}
+            className="download-button"
+          >
+            💾 Зберегти привітайку
+          </button>
         </div>
       )}
     </section>

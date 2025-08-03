@@ -20,6 +20,9 @@ export const MainDalleFirstImage = () => {
   // useState для контролю видимості фіксованої кнопки
   const [isFixedButtonVisible, setIsFixedButtonVisible] = useState(true);
   
+  // Ref для доступу до функції generateImage з ImageGenerationSection
+  const generateImageRef = useRef(null);
+  
   // Створюємо refs для кожної секції
   const styleRef = useRef(null);
   const moodRef = useRef(null);
@@ -54,16 +57,21 @@ export const MainDalleFirstImage = () => {
   };
 
   const handleGenerateImage = async () => {
-    setLoading(true);
-    try {
-      // Тут буде логіка генерації зображення
-      console.log('Генеруємо зображення з даними:', formData);
-      // Симуляція запиту
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    } catch (error) {
-      console.error('Помилка генерації:', error);
-    } finally {
-      setLoading(false);
+    // Спочатку скролимо до ImageGenerationSection
+    if (imageGenerationRef.current) {
+      imageGenerationRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+        inline: 'nearest'
+      });
+      
+      // Невелика затримка, щоб скрол встиг завершитися
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+    // Потім запускаємо генерацію зображення
+    if (generateImageRef.current && generateImageRef.current.generateImage) {
+      await generateImageRef.current.generateImage();
     }
   };
 
@@ -172,14 +180,15 @@ export const MainDalleFirstImage = () => {
         ref={imageGenerationRef}
         onImageGenerated={handleFieldChange}
         formData={formData}
+        onGenerateImageRef={generateImageRef}
         scrollToNextSection={createScrollToNextSection(8)}
       />
 
       {isFixedButtonVisible && (
         <FixedButtonSection 
           formData={formData}
-          onGenerateImage={handleGenerateImage}
-          loading={loading}
+          onButtonClick={handleGenerateImage}
+          loading={generateImageRef.current?.isGenerating || false}
         />
       )}
 

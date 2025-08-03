@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './FixedButtonSection.css';
-
-const FixedButtonSection = ({ formData, onGenerateImage, loading }) => {
+ 
+export const FixedButtonSection = ({ formData, onGenerateImage, loading,onButtonClick }) => {
   // useState для управління поточним рівнем та прогресом
   const [currentLevel, setCurrentLevel] = useState(0);
   const [progressScore, setProgressScore] = useState(0);
@@ -93,7 +93,7 @@ const FixedButtonSection = ({ formData, onGenerateImage, loading }) => {
         className={btnClass}
         type="submit"
         disabled={disabled || loading}
-        onClick={onGenerateImage}
+        onClick={onButtonClick}
       >
         {loading ? "Генеруємо привітайку..." : "Згенерувати зображення"}
       </button>
@@ -102,4 +102,3 @@ const FixedButtonSection = ({ formData, onGenerateImage, loading }) => {
   );
 };
 
-export default FixedButtonSection;
