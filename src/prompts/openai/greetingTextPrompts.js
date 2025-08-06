@@ -13,8 +13,6 @@ export const greetingTextPrompts = (formData) => {
 
 Настрій картки: ${formData.cardMood || 'позитивний'}.
 
-Стиль картки: ${formData.cardStyle || 'класичний'}.
-
 Тексти мають бути:
 - Персоналізованими та теплими
 - Відповідати настрою та стилю

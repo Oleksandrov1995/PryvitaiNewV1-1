@@ -1,4 +1,5 @@
 import React, { useState, forwardRef, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ImageGenerationSection.css";
 import { dalleImagePrompt } from "../../../prompts/openai/dalleImagePrompt";
 import { API_URLS } from "../../../config/api";
@@ -7,6 +8,18 @@ import { downloadImage } from "../../../utils/downloadImage";
 const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSection, formData, onGenerateImageRef }, ref) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImageUrl, setGeneratedImageUrl] = useState("");
+  const navigate = useNavigate();
+
+  // Функція для переходу до редактора
+  const handleEditImage = () => {
+    if (generatedImageUrl) {
+      const params = new URLSearchParams({
+        imageUrl: generatedImageUrl,
+        text: formData.greetingText || ''
+      });
+      navigate(`/editor?${params.toString()}`);
+    }
+  };
 
   const generateImage = useCallback(async () => {
     setIsGenerating(true);
@@ -230,6 +243,12 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
         )}
       </button>
 
+      {isGenerating && (
+        <div className="generation-time-info">
+          <p>Генерація займає орієнтовно 2-3 хвилини</p>
+        </div>
+      )}
+
       {generatedImageUrl && (
         <div className="final-image-result">
           <p><strong>🖼️ Фінальне згенероване зображення:</strong></p>
@@ -244,6 +263,13 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
             className="download-button"
           >
             💾 Зберегти привітайку
+          </button>
+          
+          <button 
+            onClick={handleEditImage}
+            className="edit-button"
+          >
+            ✏️ Додати текст привітання
           </button>
         </div>
       )}
