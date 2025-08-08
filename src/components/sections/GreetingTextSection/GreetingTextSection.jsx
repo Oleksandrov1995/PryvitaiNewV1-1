@@ -12,9 +12,24 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
   const generatedGreetingsRef = useRef(null);
   const maxLength = 500;
 
+  // Функція для отримання поточного тексту (для ref)
+  const getCurrentText = () => {
+    return previewText || greetingText || '';
+  };
+
+  // Експонуємо функцію через ref
+  React.useImperativeHandle(ref, () => ({
+    getCurrentText
+  }));
+
   const handleTextChange = (value) => {
     if (value.length <= maxLength) {
       setPreviewText(value); // Оновлюємо тільки preview
+      
+      // Передаємо текст в formData
+      if (onTextChange) {
+        onTextChange("greetingText", value);
+      }
       
       // Прибираємо автоматичний скрол звідси
     }
@@ -22,6 +37,11 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
 
   const handleExampleClick = (example) => {
     handleTextChange(example);
+    
+    // Передаємо вибрану ідею в formData
+    if (onTextChange) {
+      onTextChange("greetingText", example);
+    }
     
     // Скролимо до textarea після вибору варіанту
     if (textareaRef.current) {
@@ -126,24 +146,30 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
 
 
         {generatedGreetings.length > 0 && (
-          <button 
-            onClick={() => {
-              // Підтверджуємо текст - переносимо з preview в основний стейт
-              setGreetingText(previewText);
-              
-              if (onTextChange) {
-                onTextChange("greetingText", previewText);
-              }
-              
-              if (scrollToNextSection) {
-                scrollToNextSection();
-              }
-            }}
-            className="confirm-button"
-            disabled={!previewText || previewText.length < 20}
-          >
-            ✅ Підтвердити ідею
-          </button>
+          <div className="confirm-actions">
+            <button 
+              onClick={() => {
+                // Підтверджуємо текст - переносимо з preview в основний стейт
+                setGreetingText(previewText);
+                
+                if (scrollToNextSection) {
+                  scrollToNextSection();
+                }
+              }}
+              className="confirm-button"
+              disabled={!previewText || previewText.length < 20}
+            >
+              ✅ Підтвердити ідею
+            </button>
+            
+            <button 
+              onClick={generateGreetingIdeas}
+              disabled={isGenerating}
+              className="regenerate-button"
+            >
+              🔄
+            </button>
+          </div>
         )}
 
         {generatedGreetings.length > 0 && (

@@ -5,7 +5,7 @@ import { dalleImagePrompt } from "../../../prompts/openai/dalleImagePrompt";
 import { API_URLS } from "../../../config/api";
 import { downloadImage } from "../../../utils/downloadImage";
 
-const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSection, formData, onGenerateImageRef }, ref) => {
+const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSection, formData, onGenerateImageRef, greetingTextRef }, ref) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImageUrl, setGeneratedImageUrl] = useState("");
   const navigate = useNavigate();
@@ -13,9 +13,18 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
   // Функція для переходу до редактора
   const handleEditImage = () => {
     if (generatedImageUrl) {
+      // Отримуємо текст з GreetingTextSection або з formData
+      let textToUse = '';
+      
+      if (greetingTextRef && greetingTextRef.current && greetingTextRef.current.getCurrentText) {
+        textToUse = greetingTextRef.current.getCurrentText();
+      } else {
+        textToUse = formData.greetingText || '';
+      }
+      
       const params = new URLSearchParams({
         imageUrl: generatedImageUrl,
-        text: formData.greetingText || ''
+        text: textToUse
       });
       navigate(`/editor?${params.toString()}`);
     }
@@ -239,7 +248,7 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
             Генерую привітайку
           </>
         ) : (
-          '🎨 Згенерувати зображення'
+          generatedImageUrl ? '🔄 Генерувати повторно' : '🎨 Згенерувати зображення'
         )}
       </button>
 

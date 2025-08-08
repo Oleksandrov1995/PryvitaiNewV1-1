@@ -30,6 +30,15 @@ const CardStyleSection = forwardRef(({ onStyleChange, scrollToNextSection }, ref
       onStyleChange("cardStyle", value);
     }
   };
+
+  const handleCustomStyleKeyDown = (e) => {
+    if (e.key === 'Enter' && customStyle.trim().length >= 3) {
+      e.preventDefault();
+      if (scrollToNextSection) {
+        setTimeout(() => scrollToNextSection(), 300);
+      }
+    }
+  };
   return (
     <section ref={ref} className="card-style-section">
       <h2>Стиль</h2>
@@ -50,6 +59,7 @@ const CardStyleSection = forwardRef(({ onStyleChange, scrollToNextSection }, ref
         placeholder="Ваш креативний варіант - наприклад: в стилі мультика Енеїда"
         value={customStyle}
         onChange={(e) => handleCustomStyleChange(e.target.value)}
+        onKeyDown={handleCustomStyleKeyDown}
         className="custom-style-input"
       />
     </section>

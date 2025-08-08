@@ -36,9 +36,9 @@ const Editor = () => {
       const canvasWidth = imgWidth;
       
       // Розраховуємо висоту плашки під текст
-      ctx.font = "22px sans-serif";
+      ctx.font = "24px sans-serif";
       const lines = wrapText(ctx, text, canvasWidth - 40);
-      const lineHeight = 28;
+      const lineHeight = 30;
       const textHeight = lines.length * lineHeight;
       const bannerHeight = Math.max(BANNER_HEIGHT, textHeight + 40);
       
@@ -63,7 +63,7 @@ const Editor = () => {
       ctx.fillRect(0, imgHeight, canvasWidth, bannerHeight);
 
       // Малюємо чорний текст
-      ctx.font = "22px sans-serif";
+      ctx.font = "24px sans-serif";
       ctx.fillStyle = "#000000";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -109,21 +109,8 @@ const Editor = () => {
       // Створюємо blob з canvas
       canvas.toBlob((blob) => {
         if (blob) {
-          // Для мобільних пристроїв використовуємо Web Share API якщо доступний
-          if (navigator.share && /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            const file = new File([blob], "pryvitai-card.png", { type: "image/png" });
-            navigator.share({
-              title: "Листівка з Привітайком",
-              files: [file]
-            }).catch((error) => {
-              console.log('Помилка поділу:', error);
-              // Fallback до звичайного завантаження
-              downloadBlob(blob);
-            });
-          } else {
-            // Для десктопу або якщо Web Share API недоступний
-            downloadBlob(blob);
-          }
+          // Завжди завантажуємо файл на пристрій
+          downloadBlob(blob);
         }
       }, "image/png");
     } catch (error) {
@@ -134,14 +121,33 @@ const Editor = () => {
 
   // Допоміжна функція для завантаження blob
   const downloadBlob = (blob) => {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "pryvitai-card.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    try {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "pryvitai-card.png";
+      
+      // Для мобільних пристроїв додаємо атрибути для кращої роботи
+      if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+      }
+      
+      // Додаємо до DOM, клікаємо та видаляємо
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Очищуємо URL після завантаження
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      console.log('Файл успішно завантажено');
+    } catch (error) {
+      console.error('Помилка при завантаженні файлу:', error);
+      alert('Помилка при завантаженні файлу');
+    }
   };
 
   // Поділитися зображенням
@@ -154,8 +160,8 @@ const Editor = () => {
           if (navigator.share && blob) {
             const file = new File([blob], "pryvitai-card.png", { type: "image/png" });
             navigator.share({
-              title: "Листівка з Привітайком",
-              text: "Подивіться на мою персоналізовану листівку!",
+              title: "Згенеровано з gifta.pp.ua персонально для Вас",
+              // text: "Подивіться на мою персоналізовану листівку!",
               files: [file]
             }).catch((error) => {
               console.log('Помилка поділу:', error);
@@ -194,6 +200,11 @@ const Editor = () => {
     navigate("/");
   };
 
+  // Повернутися назад зі збереженням даних
+  const handleGoBack = () => {
+    navigate("/");
+  };
+
   if (!imageUrl) {
     return (
       <div className="editor-container">
@@ -209,6 +220,10 @@ const Editor = () => {
 
   return (
     <div className="editor-container">
+      <button onClick={handleGoBack} className="back-button">
+        ←
+      </button>
+      
       <div className="editor-header">
         {/* <h2>🎨 Автоматичне додавання тексту виконано</h2> */}
         {/* <p>Налаштуйте та збережіть вашу привітайку</p> */}
@@ -223,12 +238,12 @@ const Editor = () => {
       </div>
 
       <div className="editor-actions">
-        <button onClick={handleDownload} className="action-button download-button">
-          💾 Завантажити
-        </button>
-        
         <button onClick={handleShare} className="action-button share-button">
           📤 Поділитися
+        </button>
+        
+        <button onClick={handleDownload} className="action-button download-button">
+          💾 Завантажити
         </button>
         
         <button onClick={handleCreateNew} className="action-button create-button">

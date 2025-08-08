@@ -50,9 +50,15 @@ const TraitsSection = forwardRef(({ onTraitChange, scrollToNextSection }, ref) =
       onTraitChange("trait", value);
     }
     
-    // Автоскрол при введенні достатньої кількості тексту
-    if (value.length >= 3 && scrollToNextSection) {
-      setTimeout(() => scrollToNextSection(), 800);
+    // Прибираємо автоскрол при введенні тексту
+  };
+
+  const handleCustomTraitKeyDown = (e) => {
+    if (e.key === 'Enter' && customTrait.trim().length >= 3) {
+      e.preventDefault();
+      if (scrollToNextSection) {
+        setTimeout(() => scrollToNextSection(), 300);
+      }
     }
   };
 
@@ -80,6 +86,7 @@ const TraitsSection = forwardRef(({ onTraitChange, scrollToNextSection }, ref) =
         placeholder="Ваш варіант риси (наприклад: креативність)"
         value={customTrait}
         onChange={(e) => handleCustomTraitChange(e.target.value)}
+        onKeyDown={handleCustomTraitKeyDown}
         className="custom-trait-input"
       />
       

@@ -6,6 +6,36 @@
   border-radius: 1rem;
   border: 2px solid #dee2e6;
   text-align: center;
+  position: relative; /* Для позиціонування кнопки назад */
+}
+
+.back-button {
+  position: absolute;
+  top: 5px;
+  left: 20px;
+  margin-bottom: 30px;
+  background: #f8f9fa;
+  color: rgb(179, 179, 188);
+  border: none;
+  font-size: 1.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 0;
+}
+
+.back-button:hover {
+  background: #f8f9fa;
+  transform: translateY(1px);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.back-button:active {
+  transform: translateY(0);
 }
 
 .editor-header {
@@ -49,6 +79,7 @@
   justify-content: center;
   flex-wrap: wrap;
   margin: 2rem 0;
+  align-items: flex-end;
 }
 
 .action-button {
@@ -61,11 +92,13 @@
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
+  align-self: center;
   justify-content: center;
   gap: 0.5rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 200px; /* Фіксована ширина для всіх кнопок */
-  min-height: 50px; /* Мінімальна висота */
+  height: 50px; /* Мінімальна висота */
+  line-height: 1;
 }
 
 .download-button {

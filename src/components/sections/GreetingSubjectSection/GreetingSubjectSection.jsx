@@ -28,6 +28,15 @@ const GreetingSubjectSection = forwardRef(({ onSubjectChange, scrollToNextSectio
     }
   };
 
+  const handleCustomSubjectKeyDown = (e) => {
+    if (e.key === 'Enter' && customSubject.trim().length >= 3) {
+      e.preventDefault();
+      if (scrollToNextSection) {
+        setTimeout(() => scrollToNextSection(), 300);
+      }
+    }
+  };
+
   return (
     <section ref={ref} className="greeting-subject-section">
       <h2>З чим вітаємо?</h2>
@@ -50,6 +59,7 @@ const GreetingSubjectSection = forwardRef(({ onSubjectChange, scrollToNextSectio
         placeholder="Ваш варіант (наприклад: завершення проекту)"
         value={customSubject}
         onChange={(e) => handleCustomSubjectChange(e.target.value)}
+        onKeyDown={handleCustomSubjectKeyDown}
         className="custom-greeting-subject-input"
       />
     </section>

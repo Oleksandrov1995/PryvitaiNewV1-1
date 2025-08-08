@@ -237,9 +237,10 @@ export const MainDalleFirstImage = () => {
       <ImageGenerationSection 
         ref={imageGenerationRef}
         onImageGenerated={handleFieldChange}
+        scrollToNextSection={createScrollToNextSection(7)}
         formData={formData}
         onGenerateImageRef={generateImageRef}
-        scrollToNextSection={createScrollToNextSection(8)}
+        greetingTextRef={greetingTextRef}
       />
 
       {isFixedButtonVisible && !isKeyboardOpen && !isLandscape && !isGenerating && (
