@@ -1,0 +1,235 @@
+.editor-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 1rem;
+  border: 2px solid #dee2e6;
+  text-align: center;
+  position: relative; /* Для позиціонування кнопки назад */
+}
+
+.back-button {
+  position: absolute;
+  top: 5px;
+  left: 20px;
+  margin-bottom: 30px;
+  background: #f8f9fa;
+  color: rgb(179, 179, 188);
+  border: none;
+  font-size: 1.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 0;
+}
+
+.back-button:hover {
+  background: #f8f9fa;
+  transform: translateY(1px);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.back-button:active {
+  transform: translateY(0);
+}
+
+.editor-header {
+  margin-bottom: 2rem;
+}
+
+.editor-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.editor-header p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+  text-align: center;
+}
+
+.canvas-container {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  border-radius: 0.8rem;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.editor-canvas {
+  border: 2px solid #dee2e6;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.editor-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 2rem 0;
+  align-items: flex-end;
+}
+
+.action-button {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  align-self: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 200px; /* Фіксована ширина для всіх кнопок */
+  height: 50px; /* Мінімальна висота */
+  line-height: 1;
+}
+
+.download-button {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.download-button:hover {
+  background: linear-gradient(135deg, #218838 0%, #1db584 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+}
+
+.share-button {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+}
+
+.share-button:hover {
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+}
+
+.create-button {
+  background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+  color: white;
+}
+
+.create-button:hover {
+  background: linear-gradient(135deg, #5a32a3 0%, #4a2b8a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(111, 66, 193, 0.3);
+}
+
+.editor-info {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+  border-radius: 0.5rem;
+}
+
+.editor-info p {
+  margin: 0;
+  color: #0c5460;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 0.5rem;
+  margin: 2rem 0;
+}
+
+.error-message p {
+  margin: 0 0 1rem 0;
+  color: #721c24;
+  font-size: 1rem;
+}
+
+.create-new-button {
+  background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 8px rgba(111, 66, 193, 0.3);
+}
+
+.create-new-button:hover {
+  background: linear-gradient(135deg, #5a32a3 0%, #4a2b8a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(111, 66, 193, 0.4);
+}
+
+/* Адаптивність для мобільних пристроїв */
+@media (max-width: 768px) {
+  .editor-container {
+    padding: 1rem;
+  }
+  
+  .editor-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .editor-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .action-button {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+  
+  .canvas-container {
+    padding: 0.5rem;
+  }
+  
+  .editor-canvas {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .editor-container {
+    padding: 0.5rem;
+  }
+  
+  .editor-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .action-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+    width: 100%;
+    max-width: 250px;
+  }
+} 

@@ -50,16 +50,22 @@ const HobbiesSection = forwardRef(({ onHobbyChange, scrollToNextSection }, ref) 
       onHobbyChange("hobby", value);
     }
     
-    // Автоскрол при введенні достатньої кількості тексту
-    if (value.length >= 3 && scrollToNextSection) {
-      setTimeout(() => scrollToNextSection(), 800);
+    // Прибираємо автоскрол при введенні тексту
+  };
+
+  const handleCustomHobbyKeyDown = (e) => {
+    if (e.key === 'Enter' && customHobby.trim().length >= 3) {
+      e.preventDefault();
+      if (scrollToNextSection) {
+        setTimeout(() => scrollToNextSection(), 300);
+      }
     }
   };
 
   return (
     <section ref={ref} className="hobbies-section">
       <h2>Атрибути та символи</h2>
-      <p className="selection-info">Оберіть до {maxSelections} варіантів ({selectedHobbies.length}/{maxSelections})</p>
+      {/* <p className="selection-info">Оберіть до {maxSelections} варіантів ({selectedHobbies.length}/{maxSelections})</p> */}
       
       <div className="hobbies-options">
         {optionsHobbies.map((hobby) => (
@@ -80,6 +86,7 @@ const HobbiesSection = forwardRef(({ onHobbyChange, scrollToNextSection }, ref) 
         placeholder="Ваш варіант (наприклад: колекціонування монет)"
         value={customHobby}
         onChange={(e) => handleCustomHobbyChange(e.target.value)}
+        onKeyDown={handleCustomHobbyKeyDown}
         className="custom-hobby-input"
       />
       

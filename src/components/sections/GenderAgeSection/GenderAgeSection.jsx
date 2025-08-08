@@ -68,7 +68,7 @@ const GenderAgeSection = forwardRef(({ onGenderChange, onAgeChange, scrollToNext
         </div>
 
         <div className="age-group">
-          <h3>Вік</h3>
+          {/* <h3>Вік</h3> */}
           <div className="age-input-container">
             <input
               type="number"

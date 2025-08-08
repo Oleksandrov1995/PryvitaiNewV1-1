@@ -12,9 +12,24 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
   const generatedGreetingsRef = useRef(null);
   const maxLength = 500;
 
+  // Функція для отримання поточного тексту (для ref)
+  const getCurrentText = () => {
+    return previewText || greetingText || '';
+  };
+
+  // Експонуємо функцію через ref
+  React.useImperativeHandle(ref, () => ({
+    getCurrentText
+  }));
+
   const handleTextChange = (value) => {
     if (value.length <= maxLength) {
       setPreviewText(value); // Оновлюємо тільки preview
+      
+      // Передаємо текст в formData
+      if (onTextChange) {
+        onTextChange("greetingText", value);
+      }
       
       // Прибираємо автоматичний скрол звідси
     }
@@ -22,6 +37,11 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
 
   const handleExampleClick = (example) => {
     handleTextChange(example);
+    
+    // Передаємо вибрану ідею в formData
+    if (onTextChange) {
+      onTextChange("greetingText", example);
+    }
     
     // Скролимо до textarea після вибору варіанту
     if (textareaRef.current) {
@@ -91,16 +111,26 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
   return (
     <section ref={ref} className="greeting-text-section">
       <h2>Текст привітання</h2>
-      <p className="description">
+      {/* <p className="description">
         Напишіть особисте привітання або побажання. Це буде основний текст вашої картки.
-      </p>
+      </p> */}
+
+        <button 
+          onClick={generateGreetingIdeas}
+          disabled={isGenerating}
+          className="generate-button"
+          style={{ display: generatedGreetings.length > 0 ? 'none' : 'block' }}
+        >
+          {isGenerating ? 'Генерую...' : 'Згенерувати ідеї тексту привітання'}
+        </button>
+        {/* <span>Генерація займе орієнтовно 30 секунд</span> - треба додати стилі */}
 
       <div className="greeting-text-container">
         <textarea
           ref={textareaRef}
           value={previewText}
           onChange={(e) => handleTextChange(e.target.value)}
-          placeholder="Введіть ваш текст привітання тут... Наприклад: 'Щиро вітаю з днем народження! Бажаю здоров'я, щастя та успіхів!'"
+          placeholder="Або Ваш варіант - наприклад: 'Бажаю здоров'я, щастя та квітучого процвітання!'"
           className="greeting-textarea"
           maxLength={maxLength}
         />
@@ -113,34 +143,33 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
          
         </div>
 
-        <button 
-          onClick={generateGreetingIdeas}
-          disabled={isGenerating}
-          className="generate-button"
-          style={{ display: generatedGreetings.length > 0 ? 'none' : 'block' }}
-        >
-          {isGenerating ? 'Генерую...' : 'Згенерувати ідеї привітання'}
-        </button>
+
 
         {generatedGreetings.length > 0 && (
-          <button 
-            onClick={() => {
-              // Підтверджуємо текст - переносимо з preview в основний стейт
-              setGreetingText(previewText);
-              
-              if (onTextChange) {
-                onTextChange("greetingText", previewText);
-              }
-              
-              if (scrollToNextSection) {
-                scrollToNextSection();
-              }
-            }}
-            className="confirm-button"
-            disabled={!previewText || previewText.length < 20}
-          >
-            ✅ Підтвердити ідею
-          </button>
+          <div className="confirm-actions">
+            <button 
+              onClick={() => {
+                // Підтверджуємо текст - переносимо з preview в основний стейт
+                setGreetingText(previewText);
+                
+                if (scrollToNextSection) {
+                  scrollToNextSection();
+                }
+              }}
+              className="confirm-button"
+              disabled={!previewText || previewText.length < 20}
+            >
+              ✅ Підтвердити ідею
+            </button>
+            
+            <button 
+              onClick={generateGreetingIdeas}
+              disabled={isGenerating}
+              className="regenerate-button"
+            >
+              🔄
+            </button>
+          </div>
         )}
 
         {generatedGreetings.length > 0 && (
@@ -161,7 +190,7 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
         )}
 
         <div className="greeting-tips">
-                  <p>Перевірте текст на помилки перед завершенням</p>
+                  <p>Перевірте згенерований текст на помилки та відредагуйте за необхідності</p>
         </div>
       </div>
     </section>

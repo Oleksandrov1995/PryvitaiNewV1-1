@@ -18,34 +18,84 @@ export const downloadImage = async (imageUrl, filename = null) => {
     
     const blob = await response.blob();
     
-    // Створюємо URL для blob
-    const url = window.URL.createObjectURL(blob);
-    
     // Генеруємо ім'я файлу якщо не надано
     const defaultFilename = `pryvitai-${Date.now()}.png`;
     const downloadFilename = filename || defaultFilename;
     
-    // Створюємо тимчасове посилання для скачування
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = downloadFilename;
-    link.style.display = 'none'; // Ховаємо посилання
+    // Перевіряємо чи це мобільний пристрій
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    // Додаємо до DOM, клікаємо та видаляємо
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    // Очищуємо ресурси
-    window.URL.revokeObjectURL(url);
-    
-    console.log(`✅ Зображення успішно завантажено: ${downloadFilename}`);
-    return true;
+    if (isMobile) {
+      // Для мобільних пристроїв використовуємо Web Share API якщо доступний
+      if (navigator.share && navigator.canShare) {
+        try {
+          const file = new File([blob], downloadFilename, { type: 'image/png' });
+          const shareData = {
+            title: 'Привітайка',
+            text: 'Моя згенерована привітайка',
+            files: [file]
+          };
+          
+          if (navigator.canShare(shareData)) {
+            await navigator.share(shareData);
+            console.log('✅ Зображення поділено через Web Share API');
+            return true;
+          }
+        } catch (shareError) {
+          console.log('Web Share API недоступний, використовуємо fallback');
+        }
+      }
+      
+      // Fallback для мобільних пристроїв - відкриваємо в новій вкладці
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.style.display = 'none';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Очищуємо ресурси через деякий час
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+      }, 1000);
+      
+      console.log(`✅ Зображення відкрито в новій вкладці для мобільного пристрою`);
+      return true;
+    } else {
+      // Для десктопних пристроїв використовуємо звичайне завантаження
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = downloadFilename;
+      link.style.display = 'none';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Очищуємо ресурси
+      window.URL.revokeObjectURL(url);
+      
+      console.log(`✅ Зображення успішно завантажено: ${downloadFilename}`);
+      return true;
+    }
     
   } catch (error) {
     console.error('❌ Помилка при скачуванні зображення:', error);
-    alert('Не вдалося завантажити зображення. Спробуйте ще раз.');
-    return false;
+    
+    // Fallback - спробуємо через canvas
+    try {
+      console.log('Спроба завантаження через canvas...');
+      return await downloadImageViaCanvas(imageUrl, filename);
+    } catch (canvasError) {
+      console.error('❌ Помилка при скачуванні через canvas:', canvasError);
+      alert('Не вдалося завантажити зображення. Спробуйте ще раз.');
+      return false;
+    }
   }
 };
 
@@ -85,23 +135,57 @@ export const downloadImageViaCanvas = async (imageUrl, filename = null) => {
             return;
           }
           
-          const url = window.URL.createObjectURL(blob);
           const defaultFilename = `pryvitai-${Date.now()}.png`;
           const downloadFilename = filename || defaultFilename;
           
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = downloadFilename;
-          link.style.display = 'none';
+          // Перевіряємо чи це мобільний пристрій
+          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
           
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          
-          window.URL.revokeObjectURL(url);
-          
-          console.log(`✅ Зображення успішно завантажено через canvas: ${downloadFilename}`);
-          resolve(true);
+          if (isMobile) {
+            // Для мобільних пристроїв використовуємо Web Share API або відкриваємо в новій вкладці
+            if (navigator.share && navigator.canShare) {
+              try {
+                const file = new File([blob], downloadFilename, { type: 'image/png' });
+                const shareData = {
+                  title: 'Привітайка',
+                  text: 'Моя згенерована привітайка',
+                  files: [file]
+                };
+                
+                if (navigator.canShare(shareData)) {
+                  navigator.share(shareData).then(() => {
+                    console.log('✅ Зображення поділено через Web Share API (canvas)');
+                    resolve(true);
+                  }).catch(() => {
+                    // Fallback - відкриваємо в новій вкладці
+                    openInNewTab(blob, downloadFilename);
+                  });
+                  return;
+                }
+              } catch (shareError) {
+                console.log('Web Share API недоступний, використовуємо fallback');
+              }
+            }
+            
+            // Fallback для мобільних пристроїв
+            openInNewTab(blob, downloadFilename);
+          } else {
+            // Для десктопних пристроїв використовуємо звичайне завантаження
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = downloadFilename;
+            link.style.display = 'none';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            window.URL.revokeObjectURL(url);
+            
+            console.log(`✅ Зображення успішно завантажено через canvas: ${downloadFilename}`);
+            resolve(true);
+          }
         }, 'image/png');
       };
       
@@ -117,4 +201,25 @@ export const downloadImageViaCanvas = async (imageUrl, filename = null) => {
     alert('Не вдалося завантажити зображення. Спробуйте ще раз.');
     return false;
   }
+};
+
+// Допоміжна функція для відкриття в новій вкладці
+const openInNewTab = (blob, filename) => {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.style.display = 'none';
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  // Очищуємо ресурси через деякий час
+  setTimeout(() => {
+    window.URL.revokeObjectURL(url);
+  }, 1000);
+  
+  console.log(`✅ Зображення відкрито в новій вкладці для мобільного пристрою (canvas)`);
 };
