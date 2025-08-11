@@ -54,7 +54,7 @@ export const MainDalleFirstImage = () => {
 
   const handleFieldChange = (field, value) => {
     updateField(field, value);
-    console.log(`Оновлено ${field}: ${value}`);
+
   };
 
   const handleGenerateImage = async () => {
@@ -77,18 +77,19 @@ export const MainDalleFirstImage = () => {
   };
 
   // Функція для скролу до наступної секції
-  const createScrollToNextSection = (currentIndex) => {
-    return () => {
-      const nextIndex = currentIndex + 1;
-      if (nextIndex < sectionRefs.length && sectionRefs[nextIndex].current) {
-        sectionRefs[nextIndex].current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-          inline: 'nearest'
-        });
-      }
-    };
+const createScrollToNextSection = (currentIndex) => {
+  return () => {
+    const nextIndex = currentIndex + 1;
+    const next = sectionRefs[nextIndex]?.current;
+    console.log('scroll target', next, typeof next?.scrollIntoView);
+    if (next && typeof next.scrollIntoView === 'function') {
+      next.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+    } else {
+      console.warn('Cannot scroll: target has no scrollIntoView');
+    }
   };
+};
+
 
   // useEffect для відстеження видимості ImageGenerationSection
   useEffect(() => {
@@ -118,62 +119,6 @@ export const MainDalleFirstImage = () => {
     };
   }, []);
 
-  // useEffect для відстеження клавіатури
-  useEffect(() => {
-    const handleResize = () => {
-      // Перевіряємо чи це мобільний пристрій
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      
-      if (isMobile) {
-        // Визначаємо чи відкрита клавіатура (зменшення висоти вікна)
-        const windowHeight = window.innerHeight;
-        const screenHeight = window.screen.height;
-        const keyboardThreshold = screenHeight * 0.3; // 30% від висоти екрану
-        
-        setIsKeyboardOpen(windowHeight < (screenHeight - keyboardThreshold));
-      } else {
-        setIsKeyboardOpen(false); // На десктопі завжди false
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Перевіряємо при завантаженні
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // useEffect для відстеження орієнтації
-  useEffect(() => {
-    const handleOrientation = () => {
-      // Перевіряємо чи це мобільний пристрій
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      
-      if (isMobile) {
-        setIsLandscape(window.innerWidth > window.innerHeight);
-      } else {
-        setIsLandscape(false); // На десктопі завжди false
-      }
-    };
-
-    window.addEventListener('resize', handleOrientation);
-    handleOrientation(); // Перевіряємо при завантаженні
-
-    return () => window.removeEventListener('resize', handleOrientation);
-  }, []);
-
-  // useEffect для відстеження генерації зображення
-  useEffect(() => {
-    const checkGeneratingStatus = () => {
-      if (generateImageRef.current) {
-        setIsGenerating(generateImageRef.current.isGenerating || false);
-      }
-    };
-
-    // Перевіряємо кожні 100мс
-    const interval = setInterval(checkGeneratingStatus, 100);
-    
-    return () => clearInterval(interval);
-  }, []);
 
 
   return (
@@ -225,7 +170,8 @@ export const MainDalleFirstImage = () => {
         onTraitChange={handleFieldChange}
         scrollToNextSection={createScrollToNextSection(6)}
       />
-            <GreetingTextSection 
+
+      <GreetingTextSection 
         ref={greetingTextRef}
         onTextChange={handleFieldChange}
         formData={formData}
@@ -237,13 +183,12 @@ export const MainDalleFirstImage = () => {
       <ImageGenerationSection 
         ref={imageGenerationRef}
         onImageGenerated={handleFieldChange}
-        scrollToNextSection={createScrollToNextSection(7)}
         formData={formData}
         onGenerateImageRef={generateImageRef}
-        greetingTextRef={greetingTextRef}
+        scrollToNextSection={createScrollToNextSection(8)}
       />
 
-      {isFixedButtonVisible && !isKeyboardOpen && !isLandscape && !isGenerating && (
+      {isFixedButtonVisible && (
         <FixedButtonSection 
           formData={formData}
           onButtonClick={handleGenerateImage}

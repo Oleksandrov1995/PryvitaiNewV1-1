@@ -12,10 +12,11 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
   const generatedGreetingsRef = useRef(null);
   const maxLength = 500;
 
-  // Функція для отримання поточного тексту (для ref)
-  const getCurrentText = () => {
-    return previewText || greetingText || '';
-  };
+    const sectionRef = useRef(null); // окремий ref на DOM
+  
+
+  const getCurrentText = () => previewText || greetingText || '';
+
 
   // Експонуємо функцію через ref
   React.useImperativeHandle(ref, () => ({
@@ -108,8 +109,13 @@ const GreetingTextSection = forwardRef(({ onTextChange, scrollToNextSection, for
     return '';
   };
 
+   React.useImperativeHandle(ref, () => ({
+    scrollIntoView: (options) => sectionRef.current?.scrollIntoView(options),
+    getCurrentText
+  }));
+
   return (
-    <section ref={ref} className="greeting-text-section">
+    <section ref={sectionRef} className="greeting-text-section">
       <h2>Текст привітання</h2>
       {/* <p className="description">
         Напишіть особисте привітання або побажання. Це буде основний текст вашої картки.

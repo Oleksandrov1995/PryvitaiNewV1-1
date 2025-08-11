@@ -5,7 +5,7 @@ import { optionsTraits } from "../../../data/options";
 const TraitsSection = forwardRef(({ onTraitChange, scrollToNextSection }, ref) => {
   const [selectedTraits, setSelectedTraits] = useState([]);
   const [customTrait, setCustomTrait] = useState("");
-  const maxSelections = 4;
+  const maxSelections = 3;
 
   const handleTraitSelect = (trait) => {
     setSelectedTraits(prev => {

@@ -5,7 +5,7 @@ import { optionsHobbies } from "../../../data/options";
 const HobbiesSection = forwardRef(({ onHobbyChange, scrollToNextSection }, ref) => {
   const [selectedHobbies, setSelectedHobbies] = useState([]);
   const [customHobby, setCustomHobby] = useState("");
-  const maxSelections = 4;
+  const maxSelections = 3;
 
   const handleHobbySelect = (hobby) => {
     setSelectedHobbies(prev => {
@@ -65,7 +65,7 @@ const HobbiesSection = forwardRef(({ onHobbyChange, scrollToNextSection }, ref) 
   return (
     <section ref={ref} className="hobbies-section">
       <h2>Атрибути та символи</h2>
-      {/* <p className="selection-info">Оберіть до {maxSelections} варіантів ({selectedHobbies.length}/{maxSelections})</p> */}
+      <p className="selection-info">Оберіть до {maxSelections} варіантів ({selectedHobbies.length}/{maxSelections})</p> 
       
       <div className="hobbies-options">
         {optionsHobbies.map((hobby) => (
