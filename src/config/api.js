@@ -1,15 +1,15 @@
 // Конфігурація API
 const API_CONFIG = {
   // Базова URL для API запитів - використовуємо HTTP замість HTTPS
-  BASE_URL: 'http://vps66716.hyperhost.name:5000/api',
+  BASE_URL: 'https://vps66716.hyperhost.name:5000/api',
 
   
   // Альтернативні хости для тестування
   ALTERNATIVE_HOSTS: [
-    'http://vps66716.hyperhost.name:5000/api',
+    'https://vps66716.hyperhost.name:5000/api',
     'https://vps66716.hyperhost.name:5000/api',
     'http://localhost:5000/api',
-    'http://vps66716.hyperhost.name/api'
+    'https://vps66716.hyperhost.name/api'
   ],
   
   // Окремі endpoints

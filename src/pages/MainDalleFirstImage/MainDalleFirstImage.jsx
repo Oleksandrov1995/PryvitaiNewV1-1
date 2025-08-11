@@ -17,6 +17,9 @@ import { useFormData } from "../../utils/formHandlers";
 export const MainDalleFirstImage = () => {
   // useState для контролю видимості фіксованої кнопки
   const [isFixedButtonVisible, setIsFixedButtonVisible] = useState(true);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   
   // Ref для доступу до функції generateImage з ImageGenerationSection
   const generateImageRef = useRef(null);
@@ -115,6 +118,62 @@ export const MainDalleFirstImage = () => {
     };
   }, []);
 
+  // useEffect для відстеження клавіатури
+  useEffect(() => {
+    const handleResize = () => {
+      // Перевіряємо чи це мобільний пристрій
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // Визначаємо чи відкрита клавіатура (зменшення висоти вікна)
+        const windowHeight = window.innerHeight;
+        const screenHeight = window.screen.height;
+        const keyboardThreshold = screenHeight * 0.3; // 30% від висоти екрану
+        
+        setIsKeyboardOpen(windowHeight < (screenHeight - keyboardThreshold));
+      } else {
+        setIsKeyboardOpen(false); // На десктопі завжди false
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Перевіряємо при завантаженні
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // useEffect для відстеження орієнтації
+  useEffect(() => {
+    const handleOrientation = () => {
+      // Перевіряємо чи це мобільний пристрій
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        setIsLandscape(window.innerWidth > window.innerHeight);
+      } else {
+        setIsLandscape(false); // На десктопі завжди false
+      }
+    };
+
+    window.addEventListener('resize', handleOrientation);
+    handleOrientation(); // Перевіряємо при завантаженні
+
+    return () => window.removeEventListener('resize', handleOrientation);
+  }, []);
+
+  // useEffect для відстеження генерації зображення
+  useEffect(() => {
+    const checkGeneratingStatus = () => {
+      if (generateImageRef.current) {
+        setIsGenerating(generateImageRef.current.isGenerating || false);
+      }
+    };
+
+    // Перевіряємо кожні 100мс
+    const interval = setInterval(checkGeneratingStatus, 100);
+    
+    return () => clearInterval(interval);
+  }, []);
 
 
   return (
@@ -178,12 +237,13 @@ export const MainDalleFirstImage = () => {
       <ImageGenerationSection 
         ref={imageGenerationRef}
         onImageGenerated={handleFieldChange}
+        scrollToNextSection={createScrollToNextSection(7)}
         formData={formData}
         onGenerateImageRef={generateImageRef}
-        scrollToNextSection={createScrollToNextSection(8)}
+        greetingTextRef={greetingTextRef}
       />
 
-      {isFixedButtonVisible && (
+      {isFixedButtonVisible && !isKeyboardOpen && !isLandscape && !isGenerating && (
         <FixedButtonSection 
           formData={formData}
           onButtonClick={handleGenerateImage}

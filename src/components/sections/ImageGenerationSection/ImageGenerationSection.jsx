@@ -1,12 +1,34 @@
 import React, { useState, forwardRef, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ImageGenerationSection.css";
 import { dalleImagePrompt } from "../../../prompts/openai/dalleImagePrompt";
 import { API_URLS } from "../../../config/api";
 import { downloadImage } from "../../../utils/downloadImage";
 
-const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSection, formData, onGenerateImageRef }, ref) => {
+const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSection, formData, onGenerateImageRef, greetingTextRef }, ref) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImageUrl, setGeneratedImageUrl] = useState("");
+  const navigate = useNavigate();
+
+  // Функція для переходу до редактора
+  const handleEditImage = () => {
+    if (generatedImageUrl) {
+      // Отримуємо текст з GreetingTextSection або з formData
+      let textToUse = '';
+      
+      if (greetingTextRef && greetingTextRef.current && greetingTextRef.current.getCurrentText) {
+        textToUse = greetingTextRef.current.getCurrentText();
+      } else {
+        textToUse = formData.greetingText || '';
+      }
+      
+      const params = new URLSearchParams({
+        imageUrl: generatedImageUrl,
+        text: textToUse
+      });
+      navigate(`/editor?${params.toString()}`);
+    }
+  };
 
   const generateImage = useCallback(async () => {
     setIsGenerating(true);
@@ -226,9 +248,15 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
             Генерую привітайку
           </>
         ) : (
-          '🎨 Згенерувати зображення'
+          generatedImageUrl ? '🔄 Генерувати повторно' : '🎨 Згенерувати зображення'
         )}
       </button>
+
+      {isGenerating && (
+        <div className="generation-time-info">
+          <p>Генерація займає орієнтовно 2-3 хвилини</p>
+        </div>
+      )}
 
       {generatedImageUrl && (
         <div className="final-image-result">
@@ -244,6 +272,13 @@ const ImageGenerationSection = forwardRef(({ onImageGenerated, scrollToNextSecti
             className="download-button"
           >
             💾 Зберегти привітайку
+          </button>
+          
+          <button 
+            onClick={handleEditImage}
+            className="edit-button"
+          >
+            ✏️ Додати текст привітання
           </button>
         </div>
       )}
